@@ -1,0 +1,30 @@
+{
+  "about": "Shared test vectors for the Pulse Lab formula language. Every implementation (relay-server/src/formula.ts, iOS Formula.swift, Android Formula.kt) must pass all of them. series[metric][dayOffset]: 0 = the day computed, 1 = the day before; null = no data.",
+  "evaluate": [
+    { "expr": "1 + 2 * 3 - -4 / 2", "expect": 9 },
+    { "expr": "steps / 1000", "series": { "steps": [10000, 8000, 6000] }, "expect": 10 },
+    { "expr": "avg(steps, 3d)", "series": { "steps": [10000, 8000, 6000] }, "expect": 8000 },
+    { "expr": "sum(steps, 2d)", "series": { "steps": [10000, 8000, 6000] }, "expect": 18000 },
+    { "expr": "min(steps, 3d) + max(steps, 3d)", "series": { "steps": [10000, 8000, 6000] }, "expect": 16000 },
+    { "expr": "z(hrv, 5d)", "series": { "hrv": [70, 50, 50, 50, 60, 40] }, "expect": 3.1622776601683795 },
+    { "expr": "pct_change(steps, 1d, 3d)", "series": { "steps": [10000, 8000, 6000] }, "expect": 25 },
+    { "expr": "last(steps)", "series": { "steps": [null, 5] }, "expect": 5 },
+    { "expr": "today(steps)", "series": { "steps": [null, 5] }, "expect": null },
+    { "expr": "scale(5, 0, 10)", "expect": 50 },
+    { "expr": "scale(50, 0, 10)", "expect": 100 },
+    { "expr": "clamp(15, 0, 10)", "expect": 10 },
+    { "expr": "round(abs(-2.6))", "expect": 3 },
+    { "expr": ".5 * 4", "expect": 2 },
+    { "expr": "avg(steps, 7d)", "expect": null },
+    { "expr": "1 / 0", "expect": null },
+    { "expr": "z(hrv, 30d)", "series": { "hrv": [60, 50] }, "expect": null }
+  ],
+  "inputs": [
+    { "expr": "scale(0.5*z(hrv, 30d) - 0.3*z(resting_heart_rate, 30d) + 0.2*z(sleep_hours, 14d), -2, 2)", "inputs": ["hrv", "resting_heart_rate", "sleep_hours"] }
+  ],
+  "reject": ["fetch(1)", "steps; 1", "avg(steps)", "avg(steps, 999d)", "avg(steps, 0d)", "7d", "foo", "a.b", "steps ** 2", "readiness * 2", "(1 + 2", "1 + 2)"],
+  "custom": [
+    { "expr": "readiness * 2", "customNames": ["readiness"], "valid": true },
+    { "expr": "readiness * 2", "customNames": "any", "valid": true }
+  ]
+}

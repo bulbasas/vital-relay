@@ -15,7 +15,9 @@ export const METRICS = {
   heart_rate: "bpm",
   resting_heart_rate: "bpm",
   walking_heart_rate_average: "bpm",
-  hrv_sdnn: "ms",
+  hrv: "ms", // the phone's native HRV: iPhone = SDNN, Android = RMSSD (answers carry `method`)
+  hrv_sdnn: "ms", // iPhone only
+  hrv_rmssd: "ms", // Android only
   heart_rate_recovery: "bpm",
   vo2max: "ml/kg/min",
   respiratory_rate: "breaths/min",
@@ -74,7 +76,7 @@ export const TOOLS: ToolDef[] = [
     name: "health_overview",
     title: "Health overview",
     description:
-      "Snapshot of one day from the user's iPhone (default: today): activity, resting heart rate, HRV, last night's sleep, workouts, plus 7-day baselines to compare against. Also returns today's date, the user's time zone and data freshness (when the Apple Watch last synced). Start here for open questions like 'how am I doing?' or 'why am I tired?'.",
+      "Snapshot of one day from the user's phone (default: today): activity, resting heart rate, HRV, last night's sleep, workouts, plus 7-day baselines to compare against. Also returns today's date, the user's time zone and data freshness (when the Apple Watch last synced). Start here for open questions like 'how am I doing?' or 'why am I tired?'.",
     inputSchema: { date: isoDate.optional().describe("Day to summarise, YYYY-MM-DD. Default: today.") },
     annotations: { ...READ, title: "Health overview" },
   },
@@ -82,7 +84,7 @@ export const TOOLS: ToolDef[] = [
     name: "get_metric_series",
     title: "Metric time series",
     description:
-      "Time series for one Apple Health metric. Prefer granularity 'day' (sum for cumulative metrics such as steps, average/min/max for heart rate and similar). 'hour' allows up to 14 days, 'raw' individual samples up to 3 days and only if the user allows raw access. Call list_available_metrics if unsure a metric has data.",
+      "Time series for one health metric from the user's phone (Apple Health on iPhone, Health Connect on Android — the available set depends on the platform; use list_available_metrics). 'hrv' is the phone's native heart-rate variability (iPhone: SDNN, Android: RMSSD — see the `method` field; don't compare values across methods). Prefer granularity 'day' (sum for cumulative metrics such as steps, average/min/max for heart rate and similar). 'hour' allows up to 14 days, 'raw' individual samples up to 3 days and only if the user allows raw access. Call list_available_metrics if unsure a metric has data.",
     inputSchema: {
       metric: z.enum(metricIds).describe("Metric id."),
       ...range,
@@ -133,7 +135,7 @@ export const TOOLS: ToolDef[] = [
     name: "define_metric",
     title: "Create a custom metric",
     description:
-      "Create or update a personal metric that the user's iPhone computes on device every day and shows as a card (and widget). 'expression' is a small formula language — numbers, + - * /, parentheses and these functions: today(m), last(m), avg(m, 7d), sum(m, 7d), min(m, 30d), max(m, 30d), z(m, 30d) (today's value as a z-score against the window), pct_change(m, 7d, 28d), clamp(x, lo, hi), scale(x, lo, hi) (maps to 0–100), and other custom metrics by name. m is a metric id from get_metric_series. Example readiness: scale(0.5*z(hrv_sdnn, 30d) - 0.3*z(resting_heart_rate, 30d) + 0.2*z(sleep_hours, 14d), -2, 2). The user approves new metrics on the phone.",
+      "Create or update a personal metric that the user's phone computes on device every day and shows as a card (and widget). 'expression' is a small formula language — numbers, + - * /, parentheses and these functions: today(m), last(m), avg(m, 7d), sum(m, 7d), min(m, 30d), max(m, 30d), z(m, 30d) (today's value as a z-score against the window), pct_change(m, 7d, 28d), clamp(x, lo, hi), scale(x, lo, hi) (maps to 0–100), and other custom metrics by name. m is a metric id from get_metric_series. Use 'hrv' (not hrv_sdnn/hrv_rmssd) so the metric works on any phone. Example readiness: scale(0.5*z(hrv, 30d) - 0.3*z(resting_heart_rate, 30d) + 0.2*z(sleep_hours, 14d), -2, 2). The user approves new metrics on the phone.",
     inputSchema: {
       name: z.string().regex(/^[a-z][a-z0-9_]{1,39}$/, "snake_case, 2–40 chars").describe("Identifier, e.g. readiness."),
       title: z.string().min(1).max(40).describe("Display name on the card, e.g. 'Readiness'."),
@@ -187,7 +189,7 @@ export const TOOLS: ToolDef[] = [
 ];
 
 // ── human-readable request summaries (push notifications, ledger) ──────────
-const pretty = (m: string) => m.replace(/_/g, " ").replace(/\bhrv sdnn\b/, "HRV").replace(/^\w/, (c) => c.toUpperCase());
+const pretty = (m: string) => m.replace(/_/g, " ").replace(/\bhrv( sdnn| rmssd)?\b/, "HRV").replace(/^\w/, (c) => c.toUpperCase());
 
 function span(args: Record<string, unknown>): string {
   const s = args.start as string | undefined;

@@ -13,9 +13,10 @@ import { Limiter } from "./api.ts";
 
 export const BRAND = process.env.BRAND_NAME ?? "Vital Relay";
 
-const INSTRUCTIONS = `${BRAND} reads the user's Apple Health data live from their iPhone. Nothing is stored on the relay.
+const INSTRUCTIONS = `${BRAND} reads the user's health data live from their phone (Apple Health on iPhone, Health Connect on Android). Nothing is stored on the relay.
 - Start with health_overview: it also tells you today's date and the user's time zone.
 - Prefer daily aggregates; ask for raw samples only for short ranges.
+- Metric availability depends on the phone; 'hrv' is the phone's native HRV (iPhone SDNN, Android RMSSD) — use it in custom metrics.
 - If a request is pending approval on the phone, tell the user to check their iPhone, then call get_pending_result.
 - Every answer carries a receipt id (e.g. #a4f2) that the user can find in the app's ledger — mention it when you cite numbers.
 - This is wellness data, not a medical device. Encourage professional advice for medical concerns.`;

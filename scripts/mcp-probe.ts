@@ -23,11 +23,11 @@ const show = async (name: string, args: Record<string, unknown> = {}) => {
 
 await show("relay_status");
 await show("health_overview");
-await show("get_metric_series", { metric: "hrv_sdnn", granularity: "week", start: "2026-09-01", end: "2026-10-20" });
+await show("get_metric_series", { metric: "hrv", granularity: "week", start: "2026-09-01", end: "2026-10-20" });
 await show("get_metric_series", { metric: "steps", granularity: "raw", start: "2026-09-01", end: "2026-10-20" });
 await show("list_workouts", { limit: 3 });
 await show("get_sleep", {});
-await show("define_metric", { name: "readiness", title: "Readiness", expression: "scale(0.5*z(hrv_sdnn, 30d) - 0.3*z(resting_heart_rate, 30d) + 0.2*z(sleep_hours, 14d), -2, 2)", unit: "pts", description: "HRV up, resting HR down and good sleep vs your own baseline.", higher_is_better: true });
+await show("define_metric", { name: "readiness", title: "Readiness", expression: "scale(0.5*z(hrv, 30d) - 0.3*z(resting_heart_rate, 30d) + 0.2*z(sleep_hours, 14d), -2, 2)", unit: "pts", description: "HRV up, resting HR down and good sleep vs your own baseline.", higher_is_better: true });
 await show("define_metric", { name: "broken", title: "Broken", expression: "avg(steps)", description: "should fail on the relay" });
 await show("compute_custom_metric", { name: "readiness" });
 await show("get_pending_result", { request_id: "r_doesnotexist" });

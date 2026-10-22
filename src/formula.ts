@@ -122,7 +122,7 @@ export function parse(src: string, customNames: string[] | "any" = []): Node {
             if (days < 1 || days > MAX_WINDOW) throw new FormulaError(`Window must be 1d–${MAX_WINDOW}d.`);
             args.push(count({ k: "win", days }));
           } else if (kind === "m") {
-            if (a?.t !== "id" || !isMetric(a.v)) throw new FormulaError(`${t.v}(): argument ${i + 1} must be a metric id (e.g. hrv_sdnn).`);
+            if (a?.t !== "id" || !isMetric(a.v)) throw new FormulaError(`${t.v}(): argument ${i + 1} must be a metric id (e.g. hrv).`);
             eat();
             args.push(count({ k: "ref", name: a.v }));
           } else args.push(expr());

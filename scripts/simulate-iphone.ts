@@ -101,6 +101,7 @@ function day(date: string): Day {
     resting_heart_rate: Math.round(52 + fatigue * 2.4 + gauss(r) * 1.4),
     walking_heart_rate_average: Math.round(98 + fatigue * 3 + gauss(r) * 3),
     hrv_sdnn: Math.round(Math.max(18, 56 - fatigue * 9 + gauss(r) * 7)),
+    hrv: 0, // filled below: the iPhone's native HRV is SDNN
     heart_rate: Math.round(71 + workout * 9 + gauss(r) * 4),
     vo2max: round(48.6 + gauss(r) * 0.25),
     respiratory_rate: round(14.2 + fatigue * 0.3 + gauss(r) * 0.4),
@@ -118,10 +119,11 @@ function day(date: string): Day {
     water: round(Math.max(0.6, 2.1 + gauss(r) * 0.5)),
     caffeine: Math.round(Math.max(0, 160 + gauss(r) * 70)),
   };
+  d.hrv = d.hrv_sdnn;
   dayCache.set(date, d);
   return d;
 }
-const NO_DATA = new Set(["blood_pressure_systolic", "blood_pressure_diastolic", "blood_glucose", "distance_swimming", "dietary_energy", "dietary_protein", "dietary_carbohydrates", "dietary_fat", "body_fat_percentage", "lean_body_mass", "bmi", "distance_cycling"]);
+const NO_DATA = new Set(["hrv_rmssd", "blood_pressure_systolic", "blood_pressure_diastolic", "blood_glucose", "distance_swimming", "dietary_energy", "dietary_protein", "dietary_carbohydrates", "dietary_fat", "body_fat_percentage", "lean_body_mass", "bmi", "distance_cycling"]);
 const CUMULATIVE = new Set(["steps", "active_energy", "basal_energy", "exercise_minutes", "stand_hours", "distance_walking_running", "flights_climbed", "time_in_daylight", "mindful_minutes", "water", "caffeine"]);
 
 function metricValue(m: string, date: string): number | undefined {
@@ -227,13 +229,13 @@ function handle(tool: string, args: Record<string, unknown>): Out {
             stand_hours: metricValue("stand_hours", date),
             distance_km: metricValue("distance_walking_running", date),
           },
-          heart: { resting_hr: d.resting_heart_rate, hrv_sdnn_ms: d.hrv_sdnn, walking_hr_avg: d.walking_heart_rate_average, vo2max: d.vo2max },
+          heart: { resting_hr: d.resting_heart_rate, hrv_ms: d.hrv, hrv_method: "sdnn", walking_hr_avg: d.walking_heart_rate_average, vo2max: d.vo2max },
           sleep_last_night: DENY.has("sleep_hours") ? "not shared with this AI" : sleepNight(date),
           workouts: workoutsOn(date),
           baseline_7d: {
             steps: base("steps"),
             resting_hr: base("resting_heart_rate"),
-            hrv_sdnn_ms: base("hrv_sdnn"),
+            hrv_ms: base("hrv"),
             sleep_h: base("sleep_hours"),
             active_energy_kcal: base("active_energy"),
           },
@@ -272,7 +274,8 @@ function handle(tool: string, args: Record<string, unknown>): Out {
             : { [g === "day" ? "date" : g]: k, avg: round(xs.reduce((s, v) => s + v, 0) / xs.length), min: Math.min(...xs), max: Math.max(...xs) },
         );
       }
-      return { types: [m], samples: points.length * (g === "day" ? 30 : 1), data: { metric: m, unit: METRICS[m], granularity: g, start, end, points } };
+      const method = m === "hrv" || m === "hrv_sdnn" ? { method: "sdnn" } : {};
+      return { types: [m], samples: points.length * (g === "day" ? 30 : 1), data: { metric: m, unit: METRICS[m], ...method, granularity: g, start, end, points } };
     }
     case "list_workouts": {
       const { start, end, days } = range(args);
