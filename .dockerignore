@@ -1,0 +1,11 @@
+node_modules
+data
+.env
+.env.*
+.sim-*.json
+scripts
+deploy
+README.md
+SECURITY.md
+test
+*.log

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vital Relay — your Apple Health, live in any AI</title>
+  <meta name="description" content="An iPhone app and a zero-storage relay that let Claude, ChatGPT and any MCP client ask your Apple Health data — with every byte logged on your phone.">
+  <meta name="theme-color" content="#0b0a09">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="Vital Relay — your Apple Health, live in any AI">
+  <meta property="og:description" content="Nothing stored. Every byte logged on your phone.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://pulse.impulsera.lt/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/heartline.js" defer></script>
+  <script src="/page.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav wrap">
+    <a class="brand" href="/" aria-label="Vital Relay home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#mark"/></svg>
+      <span class="brand-name">Vital Relay</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#glass">Transparency</a>
+      <a href="#trust">Privacy</a>
+      <a class="btn btn-small" href="#waitlist">Join the beta</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ───────────── Hero: the line that forgets ───────────── -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-copy">
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span> iPhone · Apple Health · MCP</p>
+        <h1 id="hero-title">Your Apple Health,<br>live in any AI.</h1>
+        <p class="lede">Claude, ChatGPT and any MCP client can ask your health data — straight from your iPhone, through a relay that stores <em>nothing</em>. Every byte that leaves is logged on your phone.</p>
+      </div>
+
+      <div class="scope" data-scope>
+        <canvas class="scope-canvas" data-heartline aria-hidden="true"></canvas>
+        <div class="scope-label scope-left">
+          <span class="k">your iPhone</span>
+          <span class="v">HealthKit · on device</span>
+        </div>
+        <div class="scope-label scope-mid" data-relay>
+          <span class="k">relay</span>
+          <span class="v">RAM only</span>
+        </div>
+        <div class="scope-label scope-right">
+          <span class="k">your AI</span>
+          <span class="v">Claude · ChatGPT · MCP</span>
+        </div>
+        <p class="scope-hint" data-hint aria-hidden="true"><span class="hint-mouse">Move your cursor — the pulse is yours now.</span><span class="hint-touch">Drag across the line — the pulse is yours now.</span></p>
+        <svg class="scope-static" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M80 100 H190 l10 -8 l10 8 h18 l6 10 l10 -86 l9 96 l8 -20 h40 q20 -26 40 0 H492" />
+          <path class="digital" d="M520 100 H920" />
+        </svg>
+      </div>
+
+      <dl class="wrap readout" aria-label="Live demo readout">
+        <div><dt>your pulse</dt><dd><span data-bpm>62</span> bpm</dd></div>
+        <div><dt>in transit</dt><dd><span data-transit>0.19</span> kB/s</dd></div>
+        <div><dt>forgotten</dt><dd><span data-forgotten>0.0</span> kB</dd></div>
+        <div class="zero"><dt>stored</dt><dd>0 B</dd></div>
+      </dl>
+
+      <div class="wrap hero-cta">
+        <a class="btn" href="#waitlist">Join the beta</a>
+        <a class="btn btn-ghost" href="#how">How it works</a>
+      </div>
+    </section>
+
+    <!-- ───────────── How it works ───────────── -->
+    <section id="how" class="section wrap" aria-labelledby="how-title">
+      <p class="eyebrow">01 — How it works</p>
+      <h2 id="how-title">Three hops. One of them forgets everything.</h2>
+      <ol class="steps">
+        <li class="step reveal">
+          <span class="step-n">iPhone</span>
+          <h3>Your phone answers</h3>
+          <p>The app reads HealthKit on device and computes the answer locally — summaries by default, raw samples only if you allow it.</p>
+        </li>
+        <li class="step reveal">
+          <span class="step-n">Relay</span>
+          <h3>A tunnel, not a database</h3>
+          <p>The answer passes through memory on its way to your AI and is gone. No health data on disk, no accounts, no email. The relay is open source.</p>
+        </li>
+        <li class="step reveal">
+          <span class="step-n">AI</span>
+          <h3>Your AI asks in plain words</h3>
+          <p>Add one URL to Claude, ChatGPT, Cursor or Claude Code. Ask “why am I tired this week?” and it fetches what it needs.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ───────────── Glass box ───────────── -->
+    <section id="glass" class="section wrap split" aria-labelledby="glass-title">
+      <div>
+        <p class="eyebrow">02 — The glass box</p>
+        <h2 id="glass-title">See every byte that leaves.</h2>
+        <p>Each request is written to a ledger on your phone: which AI asked, which tool it called, what was read, whether it was a summary or raw data, and how many bytes went out. Every answer carries a receipt number, so you can ask the AI “show me receipt #a4f2” and check it against the app.</p>
+        <p class="muted">Permissions are per AI and per category — share sleep with Claude, keep heart rate from ChatGPT. Revoke with one tap.</p>
+      </div>
+      <figure class="ledger reveal" aria-label="Example request ledger">
+        <figcaption><span class="dot live" aria-hidden="true"></span> Ledger · today</figcaption>
+        <ol data-ledger>
+          <li><time>21:55:02</time><b>Claude</b><code>list_workouts(7 days)</code><span class="out">5 workouts · summary · 2.1 kB</span><span class="rc">#a4f2</span></li>
+          <li><time>21:55:09</time><b>Claude</b><code>get_sleep(last night)</code><span class="out">1 night · stages · 0.6 kB</span><span class="rc">#a4f3</span></li>
+          <li class="deny"><time>21:56:40</time><b>ChatGPT</b><code>get_metric_series(hrv, 30d)</code><span class="out">denied · HRV not shared</span><span class="rc">#a4f4</span></li>
+        </ol>
+      </figure>
+    </section>
+
+    <!-- ───────────── Approve the answer ───────────── -->
+    <section class="section wrap split split-rev" aria-labelledby="approve-title">
+      <div>
+        <p class="eyebrow">03 — Phone in your pocket?</p>
+        <h2 id="approve-title">Approve the answer, not just the question.</h2>
+        <p>When the app is closed, your AI’s request arrives as a notification. It already shows what would be sent — “7 h 12 min average, 7 nights” — and nothing leaves until you confirm with Face ID.</p>
+        <p class="muted">Time-boxed grants (“for an hour”, “today”) and quiet hours keep it calm.</p>
+      </div>
+      <div class="notif reveal" role="img" aria-label="Example notification: Claude asks for sleep, last 7 nights. Will send: average 7 hours 12 minutes over 7 nights. Buttons: Send with Face ID, Deny.">
+        <div class="notif-head">
+          <svg class="notif-icon" viewBox="0 0 32 32" aria-hidden="true"><use href="#mark"/></svg>
+          <span>VITAL RELAY</span><span class="notif-time">now</span>
+        </div>
+        <p class="notif-title">Claude asks for: Sleep, last 7 nights</p>
+        <p class="notif-body">Will send <b>avg 7 h 12 min · 7 nights · stage totals</b></p>
+        <div class="notif-actions">
+          <span class="na na-yes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M9 9v1.5M15 9v1.5M12 9v4.5h-1M9.5 16a4 4 0 0 0 5 0"/></svg>Send</span>
+          <span class="na">Deny</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Pulse Lab ───────────── -->
+    <section class="section wrap split" aria-labelledby="lab-title">
+      <div>
+        <p class="eyebrow">04 — Pulse Lab</p>
+        <h2 id="lab-title">Let your AI invent the metric you actually need.</h2>
+        <p>Ask Claude to design a readiness score, a sleep-debt tracker or a training-load ratio. It writes a formula, your phone computes it on device every day, and it lives on your home screen as a widget.</p>
+        <p class="muted">Formulas are plain configuration with a fixed set of functions — no code ever runs on your phone.</p>
+      </div>
+      <figure class="lab reveal" aria-label="Example custom metric card">
+        <div class="lab-top"><span class="k">Readiness</span><span class="by">designed by Claude</span></div>
+        <code class="lab-f">0.5·z(HRV, 30d) − 0.3·z(RHR, 30d) + 0.2·sleep</code>
+        <div class="lab-val"><span class="big">82</span><span class="delta">+6 vs last week</span></div>
+        <svg class="spark" viewBox="0 0 200 48" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 L20 30 L40 36 L60 26 L80 28 L100 20 L120 24 L140 16 L160 18 L180 10 L200 12"/></svg>
+      </figure>
+    </section>
+
+    <!-- ───────────── Trust ───────────── -->
+    <section id="trust" class="section wrap" aria-labelledby="trust-title">
+      <p class="eyebrow">05 — Built to be trusted</p>
+      <h2 id="trust-title">Boring on purpose.</h2>
+      <ul class="trust">
+        <li class="reveal"><h3>No account</h3><p>No email, no name, no password. Your phone creates its own identity.</p></li>
+        <li class="reveal"><h3>RAM only</h3><p>Health data passes through memory. Server logs hold timestamps and sizes, never content.</p></li>
+        <li class="reveal"><h3>Open-source relay</h3><p>At launch the server code goes public: read exactly what it does — or run your own and point the app at it.</p></li>
+        <li class="reveal"><h3>Per-AI permissions</h3><p>Each connected AI gets its own scopes and its own revoke button.</p></li>
+        <li class="reveal"><h3>Summaries first</h3><p>Aggregates by default. Raw samples only when you say so.</p></li>
+        <li class="reveal"><h3>Made in the EU</h3><p>Built in Lithuania, designed for GDPR from day one.</p></li>
+      </ul>
+    </section>
+
+    <!-- ───────────── Tap your pulse + waitlist ───────────── -->
+    <section id="waitlist" class="section wrap cta" aria-labelledby="cta-title">
+      <div class="tap" data-tap>
+        <p class="eyebrow">Try it — nothing leaves this page</p>
+        <h2 id="cta-title">Two fingers on your wrist. Tap along.</h2>
+        <button class="tap-btn" type="button" data-tap-btn aria-describedby="tap-help">
+          <span class="tap-ring" aria-hidden="true"></span>
+          <span class="tap-num is-word" data-tap-num aria-live="polite">tap</span>
+        </button>
+        <p id="tap-help" class="tap-help" data-tap-help>Tap the circle (or press Space) with each beat.</p>
+        <p class="tap-reply" data-tap-reply aria-live="polite"></p>
+      </div>
+
+      <form class="waitlist" data-waitlist novalidate>
+        <h3>Join the TestFlight beta</h3>
+        <p class="muted">We store exactly one thing: your email. One message when the beta opens, then it’s deleted.</p>
+        <div class="field">
+          <label class="sr" for="wl-email">Email</label>
+          <input id="wl-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
+          <button class="btn" type="submit">Notify me</button>
+        </div>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="form-msg" data-wl-msg role="status"></p>
+      </form>
+    </section>
+
+    <!-- ───────────── FAQ ───────────── -->
+    <section class="section wrap faq" aria-labelledby="faq-title">
+      <p class="eyebrow">FAQ</p>
+      <h2 id="faq-title">Questions worth asking.</h2>
+      <details><summary>Do you store my health data?</summary><p>No. Answers travel from your phone, through the relay’s memory, to your AI. Nothing is written to disk and nothing is kept after delivery. What your AI provider does with the answer is governed by its own policy — the app tells you which AI received what.</p></details>
+      <details><summary>Which AI apps work?</summary><p>Anything that speaks MCP over HTTPS: Claude (web, desktop, mobile), ChatGPT connectors, Cursor, Claude Code and other agents.</p></details>
+      <details><summary>Does the app have to stay open?</summary><p>In the free live mode, yes — the app answers while it is on screen. With Pro, requests arrive as notifications and you approve them with Face ID while the app is closed.</p></details>
+      <details><summary>What can the AI see?</summary><p>Only the categories you allow for that specific AI. Summaries by default, raw samples only with your permission. Every request is in the ledger.</p></details>
+      <details><summary>Is this a medical device?</summary><p>No. It is a wellness and data-access tool. It does not diagnose or treat anything.</p></details>
+      <details><summary>Can I run my own relay?</summary><p>Yes — the relay will be open source at launch, and the app lets you point it at your own server.</p></details>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <span>© 2026 Vital Relay · Made in Lithuania, EU</span>
+    <span class="muted">This page sets no cookies and loads nothing from third parties.</span>
+  </footer>
+
+  <svg class="sprite" width="0" height="0" aria-hidden="true">
+    <symbol id="mark" viewBox="0 0 32 32">
+      <rect x="1" y="1" width="30" height="30" rx="8" fill="#161310" stroke="rgba(237,230,218,.14)"/>
+      <path d="M5 17h5l2-5 3 11 3-15 2.4 9H27" fill="none" stroke="#ff5c48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M21.5 6v20" stroke="rgba(237,230,218,.35)" stroke-width="1"/>
+    </symbol>
+  </svg>
+</body>
+</html>
