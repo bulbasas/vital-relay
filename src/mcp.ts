@@ -17,7 +17,7 @@ const INSTRUCTIONS = `${BRAND} reads the user's health data live from their phon
 - Start with health_overview: it also tells you today's date and the user's time zone.
 - Prefer daily aggregates; ask for raw samples only for short ranges.
 - Metric availability depends on the phone; 'hrv' is the phone's native HRV (iPhone SDNN, Android RMSSD) — use it in custom metrics.
-- If a request is pending approval on the phone, tell the user to check their iPhone, then call get_pending_result.
+- If a request is pending approval on the phone, tell the user to check their phone, then call get_pending_result.
 - Every answer carries a receipt id (e.g. #a4f2) that the user can find in the app's ledger — mention it when you cite numbers.
 - This is wellness data, not a medical device. Encourage professional advice for medical concerns.`;
 
@@ -30,8 +30,8 @@ function render(outcome: Outcome, label: string): CallToolResult {
     case "error": {
       const hints: Record<string, string> = {
         DENIED: "The user declined, or their permissions for this AI block this data. Do not retry; ask whether they want to allow it in the app.",
-        NOT_AUTHORIZED: "Apple Health has not shared this data type with the app. The user can enable it in Settings → Health → Data Access & Devices.",
-        LOCKED: "The iPhone is locked, so Apple Health data is encrypted. Ask the user to unlock the phone and try again.",
+        NOT_AUTHORIZED: "The phone's health store has not shared this data type with the app (iPhone: Settings → Health → Data Access; Android: Health Connect → App permissions).",
+        LOCKED: "The phone is locked, so its health data is encrypted. Ask the user to unlock the phone and try again.",
         UNSUPPORTED: "The app on the phone does not support this tool yet. Ask the user to update the app.",
         INVALID_ARGS: "The phone rejected the arguments.",
         NO_DATA: "There is no data for this request.",
@@ -41,15 +41,15 @@ function render(outcome: Outcome, label: string): CallToolResult {
     }
     case "pending":
       return text(
-        `Waiting for the user to approve this on their iPhone (request_id: ${outcome.requestId}). ` +
+        `Waiting for the user to approve this on their phone (request_id: ${outcome.requestId}). ` +
           `Tell the user to check their phone, then call get_pending_result with request_id "${outcome.requestId}". ` +
           `The answer is held in memory for 10 minutes.`,
       );
     case "offline":
       return text(
         outcome.reason === "push_failed"
-          ? `The user's iPhone could not be reached (notification failed). Ask them to open the ${BRAND} app — it answers while open.`
-          : `The user's iPhone relay is offline. Ask them to open the ${BRAND} app and keep it on screen (live mode), then try again. ` +
+          ? `The user's phone could not be reached (notification failed). Ask them to open the ${BRAND} app — it answers while open.`
+          : `The user's phone is offline. Ask them to open the ${BRAND} app and keep it on screen (live mode), then try again. ` +
               `With ${BRAND} Pro, requests arrive as notifications to approve while the app is closed.`,
         true,
       );

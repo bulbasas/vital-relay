@@ -172,7 +172,7 @@ export const TOOLS: ToolDef[] = [
     name: "relay_status",
     title: "Relay status",
     description:
-      "Whether the user's iPhone can answer right now: 'live' (app open), 'notify' (requests arrive as notifications to approve) or 'offline'. Call it when a request failed or before a long analysis.",
+      "Whether the user's phone can answer right now: 'live' (app open), 'notify' (requests arrive as notifications to approve) or 'offline'. Call it when a request failed or before a long analysis.",
     inputSchema: {},
     annotations: { ...READ, title: "Relay status" },
     serverSide: true,
@@ -181,7 +181,7 @@ export const TOOLS: ToolDef[] = [
     name: "get_pending_result",
     title: "Get a pending answer",
     description:
-      "Fetch the answer to an earlier request that was waiting for the user's approval on their iPhone. Waits up to about 25 seconds. Answers are kept in memory for 10 minutes, then dropped.",
+      "Fetch the answer to an earlier request that was waiting for the user's approval on their phone. Waits up to about 25 seconds. Answers are kept in memory for 10 minutes, then dropped.",
     inputSchema: { request_id: z.string().regex(/^r_[A-Za-z0-9_-]{4,20}$/) },
     annotations: { ...READ, title: "Get a pending answer" },
     serverSide: true,
